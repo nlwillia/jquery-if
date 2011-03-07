@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>jQuery IF 1.0 Demo</title>
+
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	<script type="text/javascript">google.load("jquery", "1.4");</script>
+	<script type="text/javascript" src="jquery.if.min.js"></script>
+
+	<style type="text/css" media="screen">
+		html {
+			color: #000;
+			background: #fff;
+		}
+		body {
+			margin: 10px;
+			font: 12px Verdana, Geneva, sans-serif;
+		}
+		h1 {
+			margin: 30px 0 10px;
+			font: bold 24px "Segoe UI", Arial, Helvetica, sans-serif;
+		}
+		h2 {
+			margin: 10px 0;
+			font: bold 18px "Segoe UI", Arial, Helvetica, sans-serif;
+		}
+		h3 {
+			margin: 10px 0 20px;
+			font: bold 15px "Segoe UI", Arial, Helvetica, sans-serif;
+		}
+		h3 a {
+			display: block;
+			font-weight: normal;
+		}
+		a.top {
+			position: absolute;
+			right: 10px;
+			text-decoration: none;
+			border: 1px solid #99f;
+			border-top-color: #ddf;
+			border-left-color: #ddf;
+			padding: 3px 6px;
+			color: #00c;
+			outline: none;
+		}
+		pre {
+			padding: 15px;
+			background: #ddd;
+		}
+		#foot {
+			margin: 100px 0 30px;
+			border-top: 1px solid #ccc;
+			padding-top: 4px;
+			font: 11px Verdana, Geneva, sans-serif;
+		}
+		#foot p {
+			margin: 4px 0;
+		}
+		#foot h1 {
+			margin: 20px 0 4px;
+			font: bold 13px "Segoe UI", Arial, Helvetica, sans-serif;
+		}
+		#foot ul,
+		#foot li {
+			margin: 4px 0;
+		}
+		#foot a {
+			text-decoration: none;
+			border-bottom: 1px solid #66c;
+			color: #00c;
+			outline: none;
+		}
+	</style>
+<head>
+<body>
+
+<h1>jQuery IF Plugin</h1>
+<h2>v 1.0</h2>
+<h3>By Todd Northrop <a href="http://www.speednet.biz/">www.speednet.biz</a></h3>
+
+<p>This jQuery plugin adds conditional branching to jQuery matched set chaining.</p>
+
+<p><strong>How it Works</strong></p>
+
+<p>The IF plugin works by manipulating the jQuery matched set during the chained function call execution. It takes advantage of the fact that jQuery functions typically continue executing along the function chain, even if the matched set is empty that the function call does nothing.</p>
+<p>When .IF() is executed and evaluates to false, the matched set is emptied, making subsequent function calls in the chain do nothing, and the original matched set is restored when the next .ELSE() or .ENDIF() is encountered.</p>
+<p>The .ELSE() function takes an optional argument, making it possible to implement 'else if' functionality.&nbsp; Here's an example of how it would be used.</p>
+<pre>
+$( "#myElement" )
+   .IF( myVar == "yes" )
+      .click( function () { alert( "Yes" ); } )
+   .ELSE( myVar == "maybe" )
+      .click( function () { alert( "Maybe" ); } )
+   .ELSE()
+      .click( function () { alert( "No" ); } )
+   .ENDIF();
+</pre>
+<p>Of course, this may not be the best example from a coding logic standpoint, but at least provides a clear illustration of the usage, making the conditional branching easily recognizable.  It also provides a good example of how the JavaScript code can be indented to provide legibility.</p>
+<p>Also, in this example it was not necessary to use .ENDIF() because there were no more chained functions to be executed after it.  But the use of .ENDIF() is always recommended for clarity, and it has very low overhead so it does not hurt from a performance perspective.</p>
+
+<p><strong>Arguments</strong></p>
+<p>The .IF() and .ELSE() functions can take pretty much any type of argument to evaluate, and the normal JavaScript "truthy/falsey" rules apply to determine if the subsequent chained function calls will be executed on the original matched set.</p>
+<p>The only except is if a <strong>function</strong> is passed for the argument.  In that case, the function is <strong>executed</strong>, with the matched set assigned as the context (the value of 'this'), and the function's return value is used to determine if the .IF()/.ELSE() succeeds or fails.  The second set of demonstrations below highlights this technique.</p>
+
+<p><strong>Naming Conventions</strong></p>
+<p>I wish I could have used the lower-cased .if(), .else() and .endif(), but unfortunately JavaScript does not allow a dot-notation version of a reserved word.  Interestingly, it does accept an array-indexed version of a reserved word, like: $("#myElement")['if']( ... ).css( ... )...etc.  But I think a few jQuery developers might be slightly put-off by that syntax.</p>
+<p>I arrived at using an upper-cased version of 'if' after looking at <strong>dozens</strong> of alternatives, and disliking them all for various reasons.  As a rule, I don't like to break with standard naming conventions.</p>
+<p>On the plus side, even though all-caps does not match with the camelCase naming standards in jQuery, I don't think there is any standard that <strong>prohibits</strong> its use either.</p>
+<p>Also, by making .IF(), .ELSE(), and .ENDIF() upper-case, the branching logic becomes quite visible and clear when examining code.</p>
+
+<p><strong>Demos</strong></p>
+
+<p>The demonstration below sets the various paragraphs' text.&nbsp; A yellow background is set if the test executed as expected, and a red background would indicate that the feature failed.  A blue border is set around the paragraph after the final .ENDIF() to ensure that the conditional branching structure properly resolves at the end.</p>
+<p>The features of the plugin tested here include:</p>
+<ul>
+	<li>Simple .IF() execution</li>
+	<li>Simple .ELSE() execution</li>
+	<li>.ELSE() with a condition ('else if')</li>
+	<li>Nested .IF()</li>
+	<li>Nested .ELSE()</li>
+	<li>Nested .ELSE() with a condition</li>
+</ul>
+<p>The demonstrations are first carried out one-by-one with simple expressions passed to .IF()/.ELSE(), and then in the second section they are carried out by passing an evaluation function.</p>
+
+<p><strong>Demonstrations 1:</strong> Simple expressions</p>
+<p id="demo1_1"></p>
+<p id="demo1_2"></p>
+<p id="demo1_3"></p>
+<p id="demo1_4"></p>
+<p id="demo1_5"></p>
+<p id="demo1_6"></p>
+
+<p><strong>Demonstrations 2:</strong> Function callback expressions</p>
+<p id="demo2_1"></p>
+<p id="demo2_2"></p>
+<p id="demo2_3"></p>
+<p id="demo2_4"></p>
+<p id="demo2_5"></p>
+<p id="demo2_6"></p>
+
+<div id="foot">
+	<p>IF plugin for jQuery</p>
+	<p>Copyright &copy; 2011 Todd Northrop</p>
+	<p>Visit Speednet Group at <a href="http://www.speednet.biz/">www.speednet.biz</a></p>
+	<h1>Some of our projects:</h1>
+	<ul>
+		<li><a href="http://jquery-watermark.googlecode.com/">Watermark plugin for jQuery</a></li>
+		<li><a href="http://topzindex.googlecode.com/">TopZIndex plugin for jQuery</a></li>
+		<li><a href="http://jquery-unwrap.googlecode.com/">Unwrap plugin for jQuery</a></li>
+		<li><a href="http://jquery-if.googlecode.com/">IF plugin for jQuery</a></li>
+		<li><a href="http://tinyautosave.googlecode.com/">Auto-Save plugin for TinyMCE</a></li>
+		<li><a href="http://www.lotterypost.com/gadget">Lottery Results Gagdet for Windows&nbsp;7&nbsp;&amp; Windows&nbsp;Vista</a></li>
+	</ul>
+</div>
+
+<script type="text/javascript">
+	// ** DEMO 1 *************
+	var d1 = 1;
+	
+	$("#demo1_1")
+		.IF(d1 == 1)
+			.html("Set using simple .IF() execution").css("background-color", "yellow")
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo1_2")
+		.IF(d1 == 2)
+			.html("ERROR!").css("background-color", "red")
+		.ELSE()
+			.html("Set using simple .ELSE() execution").css("background-color", "yellow")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo1_3")
+		.IF(d1 == 2)
+			.html("ERROR!").css("background-color", "red")
+		.ELSE(d1 == 1)
+			.html("Set using .ELSE() with a condition ('else if')").css("background-color", "yellow")
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo1_4")
+		.IF(d1 == 1)
+			.html("Set using Nested .IF() - text set in first .IF(), background set in nested .IF()")
+			.IF(d1 != 2)
+				.css("background-color", "yellow")
+			.ELSE()
+				.html("ERROR!").css("background-color", "red")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo1_5")
+		.IF(d1 == 1)
+			.IF(d1 == 2)
+				.html("ERROR!").css("background-color", "red")
+			.ELSE()
+				.html("Set using Nested .ELSE()").css("background-color", "yellow")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo1_6")
+		.IF(d1 == 1)
+			.IF(d1 == 2)
+				.html("ERROR!").css("background-color", "red")
+			.ELSE(d1 == 1)
+				.html("Set using Nested .ELSE() with a condition").css("background-color", "yellow")
+			.ELSE()
+				.html("ERROR!").css("background-color", "red")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	function test() {
+		
+		switch (this[0].id) {
+			case "demo2_1":
+				return true;
+			case "demo2_2":
+				return false;
+			case "demo2_3":
+				return true;
+			case "demo2_4":
+				return true;
+			case "demo2_5":
+				return false;
+			case "demo2_6":
+				return true;
+		}
+		
+		return false;
+	}
+	
+	$("#demo2_1")
+		.IF(test)
+			.html("Set using simple .IF() execution").css("background-color", "yellow")
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo2_2")
+		.IF(test)
+			.html("ERROR!").css("background-color", "red")
+		.ELSE()
+			.html("Set using simple .ELSE() execution").css("background-color", "yellow")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo2_3")
+		.IF(d1 == 2)
+			.html("ERROR!").css("background-color", "red")
+		.ELSE(test)
+			.html("Set using .ELSE() with a condition ('else if')").css("background-color", "yellow")
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo2_4")
+		.IF(d1 == 1)
+			.html("Set using Nested .IF() - text set in first .IF(), background set in nested .IF()")
+			.IF(test)
+				.css("background-color", "yellow")
+			.ELSE()
+				.html("ERROR!").css("background-color", "red")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo2_5")
+		.IF(d1 == 1)
+			.IF(test)
+				.html("ERROR!").css("background-color", "red")
+			.ELSE()
+				.html("Set using Nested .ELSE()").css("background-color", "yellow")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+	$("#demo2_6")
+		.IF(d1 == 1)
+			.IF(d1 == 2)
+				.html("ERROR!").css("background-color", "red")
+			.ELSE(test)
+				.html("Set using Nested .ELSE() with a condition").css("background-color", "yellow")
+			.ELSE()
+				.html("ERROR!").css("background-color", "red")
+			.ENDIF()
+		.ELSE()
+			.html("ERROR!").css("background-color", "red")
+		.ENDIF()
+		.css("border", "1px solid blue");
+		
+</script>
+	
+</body>
+</html>
