@@ -2,7 +2,12 @@ Changelog for IF plugin for jQuery
 Copyright © 2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated March 7, 2011
+Last updated March 8, 2011
+
+____________________________
+Version 1.0.1 (2011-03-08)
+	
+	Slightly better performing when returning an empty jQuery matched set.
 
 ____________________________
 Version 1.0 (2011-03-07)
