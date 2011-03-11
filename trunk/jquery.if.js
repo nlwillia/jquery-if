@@ -1,12 +1,12 @@
 /*	
 	IF plugin for jQuery
-	Version: 1.0.1
+	Version: 1.0.2
 	http://jquery-if.googlecode.com/
 	
 	Copyright (c) 2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	March 8, 2011
+	March 11, 2011
 	
 	Adds conditional branching to jQuery matched set chaining.
 	
@@ -91,7 +91,7 @@ $.fn.IF = function (expr) {
 	/// 	I think I've set a new record.
 	/// </notes>
 	
-	return (this._ELSE = !($.isFunction(expr)? expr.apply(this) : expr))? this.pushStack("") : this.add();
+	return this.pushStack( (this._ELSE = !($.isFunction( expr )? expr.apply( this ) : expr))? [] : this, "IF", expr );
 };
 
 $.fn.ELSE = function (expr) {
@@ -136,7 +136,7 @@ $.fn.ELSE = function (expr) {
 	
 	var $set = this.end();
 	
-	return ((!$set._ELSE) || ($set._ELSE = ((typeof(expr) !== "undefined") && (!($.isFunction(expr)? expr.apply($set) : expr)))))? $set.pushStack("") : $set.add();
+	return $set.pushStack( ((!$set._ELSE) || ($set._ELSE = ((typeof( expr ) !== "undefined") && (!($.isFunction( expr )? expr.apply( $set ) : expr)))))? [] : $set, "ELSE", expr );
 };
 
 $.fn.ENDIF = function () {
