@@ -2,7 +2,12 @@ Changelog for IF plugin for jQuery
 Copyright © 2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated March 8, 2011
+Last updated March 11, 2011
+
+____________________________
+Version 1.0.2 (2011-03-11)
+	
+	Now using .pushStack() internally for both true and false outcomes, and the .pushStack() call now supports passing 'name' and 'arguments' as the second and third arguments to .pushStack().  These two additional arguments were added to .pushStack() in jQuery 1.3.  The IF plugin is still compatible with jQuery 1.2+, the limiting factor being that $.isFunction() was added to jQuery in version 1.2.
 
 ____________________________
 Version 1.0.1 (2011-03-08)
